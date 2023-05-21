@@ -1,7 +1,9 @@
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QTextEdit, QWidget, QGridLayout
+from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QMainWindow, QTextEdit, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout
 from PyQt6.QtGui import QPixmap, QPalette, QColor
+from PyQt6 import uic
 
+'''
 class Color(QWidget):
     def __init__(self, color):
         super(Color, self).__init__()
@@ -10,6 +12,7 @@ class Color(QWidget):
         palette = self.palette()
         palette.setColor(QPalette.ColorRole.Window, QColor(color))
         self.setPalette(palette)
+'''
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -17,19 +20,32 @@ class MainWindow(QMainWindow):
 
         # self.setMouseTracking(True)
 
-        self.setFixedSize(QSize(400, 300))
+        self.setFixedSize(QSize(800, 700))
         self.setWindowTitle("FOSSEE")
-        layout = QGridLayout()
+        mainLayout = QVBoxLayout()
+        layout2 = QHBoxLayout()
+        # layout2.setContentsMargins(20, 20, 20, 20)
+        # layout2.setSpacing(20)
 
-        self.label = QLabel("Click in this window")
+        button1 = QPushButton("Move",self)
+        button1.setFixedSize(QSize(80, 50))
+        button2 = QPushButton("Group", self)
+        button2.setFixedSize(QSize(80, 50))
 
-        layout.addWidget(Color('red'), 0, 0)
-        layout.addWidget(Color('green'), 1, 0)
-        layout.addWidget(Color('blue'), 1, 1)
-        layout.addWidget(self.label, 2, 1)
+        self.canvasLabel = QLabel()
+        canvas = QPixmap(800, 600)
+        canvas.fill(QColor(0, 0, 0))
+        self.canvasLabel.setPixmap(canvas)
+
+        # layout2.addWidget(Color('red'))
+        layout2.addWidget(button1)
+        #layout2.addWidget(Color('green'))
+        layout2.addWidget(button2)
+        mainLayout.addWidget(self.canvasLabel)
+        mainLayout.addLayout(layout2)
 
         widget = QWidget()
-        widget.setLayout(layout)
+        widget.setLayout(mainLayout)
         self.setCentralWidget(widget)
 
     def mouseMoveEvent(self, e):
