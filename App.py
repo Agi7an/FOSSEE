@@ -5,6 +5,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # self.setMouseTracking(True)
+
         self.label = QLabel("Click in this window")
         self.setCentralWidget(self.label)
 
@@ -12,13 +14,28 @@ class MainWindow(QMainWindow):
         self.label.setText("Mouse Moved!")
     
     def mousePressEvent(self, e):
-        self.label.setText("Mouse Pressed!")
+        if e.button() == Qt.MouseButton.LeftButton:
+            self.label.setText("Left Mouse Button Pressed")
+        elif e.button() == Qt.MouseButton.RightButton:
+            self.label.setText("Right Mouse Button Pressed")
+        elif e.button() == Qt.MouseButton.MiddleButton:
+            self.label.setText("Middle Mouse Button Pressed")
 
     def mouseReleaseEvent(self, e):
-        self.label.setText("Mouse Released!")
+        if e.button() == Qt.MouseButton.LeftButton:
+            self.label.setText("Left Mouse Button Released")
+        elif e.button() == Qt.MouseButton.RightButton:
+            self.label.setText("Right Mouse Button Released")
+        elif e.button() == Qt.MouseButton.MiddleButton:
+            self.label.setText("Middle Mouse Button Released")
 
     def mouseDoubleClickEvent(self, e):
-        self.label.setText("Double Clicked!")
+        if e.button() == Qt.MouseButton.LeftButton:
+            self.label.setText("Left Mouse Button Double Clicked")
+        elif e.button() == Qt.MouseButton.RightButton:
+            self.label.setText("Right Mouse Button Double Clicked")
+        elif e.button() == Qt.MouseButton.MiddleButton:
+            self.label.setText("Middle Mouse Button Double Clicked")
 
 app = QApplication([])
 
