@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
+    QGroupBox,
 )
 from PyQt6.QtGui import QPixmap, QPalette, QColor, QDrag
 
@@ -54,6 +55,7 @@ names = [
 ]
 
 count = 0
+selectedImages = []
 
 
 def downloadImage():
@@ -97,8 +99,12 @@ class ImageLabel(QLabel):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            print("Image Clicked")
+            print("Image Dragged")
             self.dragStartPosition = event.pos()
+        elif event.button() == Qt.MouseButton.RightButton:
+            global selectedImages
+            print("Image Selected for Grouping")
+            selectedImages.append([self, self.rect().topLeft()])
 
     def mouseMoveEvent(self, event):
         if event.buttons() & Qt.MouseButton.LeftButton:
@@ -133,12 +139,12 @@ class MainWindow(QMainWindow):
         self.button2.setFixedSize(QSize(80, 50))
 
         self.button1.clicked.connect(self.generateImage)
+        self.button2.clicked.connect(self.groupSelected)
 
         self.layout1.addWidget(Color("white"))
         self.layout2.addWidget(self.button1)
         self.layout2.addWidget(self.button2)
 
-        # self.mainLayout.addWidget(self.canvasLabel)
         self.mainLayout.addLayout(self.layout1)
         self.mainLayout.addLayout(self.layout2)
 
@@ -179,6 +185,21 @@ class MainWindow(QMainWindow):
             event.accept()
         else:
             event.ignore()
+
+    def groupSelected(self):
+        global selectedImages
+
+        groupbox = QGroupBox()
+        self.layout1.addWidget(groupbox)
+
+        gBox = QGridLayout()
+        groupbox.setLayout(gBox)
+
+        for w in selectedImages:
+            gBox.addWidget(w[0], w[1].x(), w[1].y())
+            w[0].hide()
+
+        selectedImages.clear()
 
 
 app = QApplication([])
