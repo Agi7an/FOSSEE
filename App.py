@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QMimeData, QPoint, QByteArray
 from PyQt6.QtWidgets import (
     QApplication,
     QLabel,
@@ -10,22 +10,11 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
 )
-from PyQt6.QtGui import QPixmap, QPalette, QColor
+from PyQt6.QtGui import QPixmap, QPalette, QColor, QDrag
 
 import random
 import requests
 import os
-
-"""
-class Color(QWidget):
-    def __init__(self, color):
-        super(Color, self).__init__()
-        self.setAutoFillBackground(True)
-
-        palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(color))
-        self.setPalette(palette)
-"""
 
 names = [
     "1F4A0.svg",
@@ -92,28 +81,43 @@ def downloadImage():
         print("Failed to download the image.")
 
 
-downloadImage()
+class Color(QWidget):
+    def __init__(self, color):
+        super(Color, self).__init__()
+        self.setAutoFillBackground(True)
+
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, QColor(color))
+        self.setPalette(palette)
 
 
-class ImageWidget(QWidget):
-    def __init__(self, path):
-        super().__init__()
-        self.path = path
-        self.showImage()
+class ImageLabel(QLabel):
+    def __init__(self, parent):
+        super().__init__(parent)
 
-    def showImage(self):
-        self.image = QPixmap(self.path)
-        self.image = self.image.scaled(QSize(100, 100))
-        self.label = QLabel(self)
-        self.label.setPixmap(self.image)
-        # self.label.move(random.randint(0, 700), random.randint(0, 500))
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            print("Image Clicked")
+            self.dragStartPosition = event.pos()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() & Qt.MouseButton.LeftButton:
+            drag = QDrag(self)
+            mimeData = QMimeData()
+            pixmap = self.pixmap()
+            mimeData.setImageData(pixmap)
+            drag.setHotSpot(self.dragStartPosition - self.rect().topLeft())
+            drag.setMimeData(mimeData)
+            drag.exec()
+            self.hide()
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        # self.setMouseTracking(True)
+        self.images = []
+        self.setAcceptDrops(True)
+        # self.setStyleSheet("background-color: white;")
 
         self.setFixedSize(QSize(800, 700))
         self.setWindowTitle("FOSSEE")
@@ -130,13 +134,7 @@ class MainWindow(QMainWindow):
 
         self.button1.clicked.connect(self.generateImage)
 
-        """
-        self.canvasLabel = QLabel()
-        self.canvas = QPixmap(800, 600)
-        self.canvas.fill(QColor(0, 0, 0))
-        self.canvasLabel.setPixmap(self.canvas)
-        """
-
+        self.layout1.addWidget(Color("white"))
         self.layout2.addWidget(self.button1)
         self.layout2.addWidget(self.button2)
 
@@ -152,13 +150,35 @@ class MainWindow(QMainWindow):
         print("Downloading and displaying image...")
         downloadImage()
 
-        imageWidget = ImageWidget("Assets\Images\\" + str(count) + ".svg")
-        imageWidget.resize(100, 100)
+        path = "Assets\Images\\" + str(count) + ".svg"
+        label = ImageLabel(self)
+        label.setPixmap(QPixmap(path))
+        label.setGeometry(50, 50, 100, 100)
 
-        # self.mainLayout.addWidget(imageWidget)
         self.layout1.addWidget(
-            imageWidget, random.randint(0, count), random.randint(0, count)
+            label, random.randint(0, count), random.randint(0, count)
         )
+
+        self.images.append(label)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasImage():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasImage():
+            mimeData = event.mimeData()
+            imageData = mimeData.imageData()
+            newLabel = ImageLabel(self)
+            newLabel.setPixmap(imageData)
+            newLabel.setGeometry(event.position().x(), event.position().y(), 100, 100)
+            newLabel.show()
+
+            event.accept()
+        else:
+            event.ignore()
 
 
 app = QApplication([])

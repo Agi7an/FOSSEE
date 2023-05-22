@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt, QSize, QMimeData, QPoint, QByteArray
+from PyQt6.QtCore import Qt, QSize, QMimeData, QPoint, QByteArray, QRect
 from PyQt6.QtWidgets import (
     QApplication,
     QLabel,
@@ -82,19 +82,22 @@ def downloadImage():
 
 
 class ImageLabel(QLabel):
-    def __init__(self, parent):
+    def __init__(self, parent, pixmap):
         super().__init__(parent)
+        self.pixmap = pixmap
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            print("Image Clicked")
+            print("Image Dragged")
             self.dragStartPosition = event.pos()
+        elif event.button() == Qt.MouseButton.RightButton:
+            print("Image Selected")
 
     def mouseMoveEvent(self, event):
         if event.buttons() & Qt.MouseButton.LeftButton:
             drag = QDrag(self)
             mimeData = QMimeData()
-            pixmap = self.pixmap()
+            pixmap = self.pixmap
             mimeData.setImageData(pixmap)
             drag.setHotSpot(self.dragStartPosition - self.rect().topLeft())
             drag.setMimeData(mimeData)
@@ -117,14 +120,21 @@ class MainWindow(QMainWindow):
         # layout2.setSpacing(20)
 
         self.button1 = QPushButton("Generate", self)
-        self.button1.setFixedSize(QSize(80, 50))
+        # self.button1.setFixedSize(QSize(80, 50))
+        self.button1.resize(80, 50)
+        # self.button1.move(750, 650)
         self.button2 = QPushButton("Group", self)
-        self.button2.setFixedSize(QSize(80, 50))
+        # self.button2.setFixedSize(QSize(80, 50))
+        self.button2.resize(80, 50)
+        # self.button2.move(750, 650)
 
         self.button1.clicked.connect(self.generateImage)
 
         self.layout2.addWidget(self.button1)
         self.layout2.addWidget(self.button2)
+
+        self.layout1.setGeometry(QRect(0, 0, 700, 750))
+        self.layout2.setGeometry(QRect(0, 750, 700, 50))
 
         # self.mainLayout.addWidget(self.canvasLabel)
         self.mainLayout.addLayout(self.layout1)
@@ -139,8 +149,9 @@ class MainWindow(QMainWindow):
         downloadImage()
 
         path = "Assets\Images\\" + str(count) + ".svg"
-        label = ImageLabel(self)
-        label.setPixmap(QPixmap(path))
+        pixmap = QPixmap(path)
+        label = ImageLabel(self, pixmap)
+        label.setPixmap(pixmap)
         label.setGeometry(50, 50, 100, 100)
 
         self.layout1.addWidget(label)
@@ -157,7 +168,7 @@ class MainWindow(QMainWindow):
         if event.mimeData().hasImage():
             mimeData = event.mimeData()
             imageData = mimeData.imageData()
-            newLabel = ImageLabel(self)
+            newLabel = ImageLabel(self, imageData)
             newLabel.setPixmap(imageData)
             newLabel.setGeometry(event.position().x(), event.position().y(), 100, 100)
             newLabel.show()
