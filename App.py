@@ -11,8 +11,10 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
 )
 from PyQt6.QtGui import QPixmap, QPalette, QColor
-from PyQt6 import uic
+
 import random
+import requests
+import os
 
 """
 class Color(QWidget):
@@ -25,7 +27,72 @@ class Color(QWidget):
         self.setPalette(palette)
 """
 
-paths = ["Assets\Images\Fox.jpeg", "Assets\Images\AylanLogo2.png"]
+names = [
+    "1F4A0.svg",
+    "1F518.svg",
+    "1F532.svg",
+    "1F533.svg",
+    "1F534.svg",
+    "1F535.svg",
+    "1F536.svg",
+    "1F537.svg",
+    "1F538.svg",
+    "1F539.svg",
+    "1F53A.svg",
+    "1F53B.svg",
+    "1F7E0.svg",
+    "1F7E1.svg",
+    "1F7E2.svg",
+    "1F7E3.svg",
+    "1F7E4.svg",
+    "1F7E5.svg",
+    "1F7E6.svg",
+    "1F7E7.svg",
+    "1F7E8.svg",
+    "1F7E9.svg",
+    "1F7EA.svg",
+    "1F7EB.svg",
+    "25AA.svg",
+    "25AB.svg",
+    "25FB.svg",
+    "25FC.svg",
+    "25FD.svg",
+    "25FE.svg",
+    "26AA.svg",
+    "26AB.svg",
+    "2B1B.svg",
+    "2B1C.svg",
+]
+
+count = 0
+
+
+def downloadImage():
+    url = (
+        "https://github.com/hfg-gmuend/openmoji/raw/master/src/symbols/geometric/"
+        + names[random.randint(0, len(names) - 1)]
+    )
+
+    # Send a GET request to the URL
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        global count
+        count += 1
+        # Get the file name from the URL
+        file_name = "Assets\Images\\" + str(count) + ".svg"
+
+        # Save the image to disk
+        with open(file_name, "wb") as file:
+            file.write(response.content)
+
+        print(f"Image downloaded: {file_name}")
+    else:
+        print("Failed to download the image.")
+
+
+downloadImage()
 
 
 class ImageWidget(QWidget):
@@ -79,41 +146,12 @@ class MainWindow(QMainWindow):
 
     def generateImage(self):
         print("Downloading and displaying image...")
+        downloadImage()
 
-        r = random.randint(0, len(paths) - 1)
-
-        imageWidget = ImageWidget(paths[r])
+        imageWidget = ImageWidget("Assets\Images\\" + str(count) + ".svg")
         imageWidget.resize(100, 100)
 
         self.mainLayout.addWidget(imageWidget)
-
-    def mouseMoveEvent(self, e):
-        self.label.setText("Mouse Moved!")
-
-    def mousePressEvent(self, e):
-        if e.button() == Qt.MouseButton.LeftButton:
-            # self.label.setText("Left Mouse Button Pressed")
-            self.label.setPixmap(QPixmap("Assets\Images\Fox.jpeg"))
-        elif e.button() == Qt.MouseButton.RightButton:
-            self.label.setText("Right Mouse Button Pressed")
-        elif e.button() == Qt.MouseButton.MiddleButton:
-            self.label.setText("Middle Mouse Button Pressed")
-
-    def mouseReleaseEvent(self, e):
-        if e.button() == Qt.MouseButton.LeftButton:
-            self.label.setText("Left Mouse Button Released")
-        elif e.button() == Qt.MouseButton.RightButton:
-            self.label.setText("Right Mouse Button Released")
-        elif e.button() == Qt.MouseButton.MiddleButton:
-            self.label.setText("Middle Mouse Button Released")
-
-    def mouseDoubleClickEvent(self, e):
-        if e.button() == Qt.MouseButton.LeftButton:
-            self.label.setText("Left Mouse Button Double Clicked")
-        elif e.button() == Qt.MouseButton.RightButton:
-            self.label.setText("Right Mouse Button Double Clicked")
-        elif e.button() == Qt.MouseButton.MiddleButton:
-            self.label.setText("Middle Mouse Button Double Clicked")
 
 
 app = QApplication([])
