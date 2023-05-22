@@ -99,22 +99,7 @@ class ImageLabel(QLabel):
             drag.setHotSpot(self.dragStartPosition - self.rect().topLeft())
             drag.setMimeData(mimeData)
             drag.exec()
-            # self.hide()
-
-
-class ImageWidget(QWidget):
-    def __init__(self, path):
-        super().__init__()
-        self.path = path
-        self.initUI()
-
-    def initUI(self):
-        self.image = QPixmap(self.path)
-        # self.image = self.image.scaled(QSize(100, 100))
-        self.label = ImageLabel(self)
-        self.label.setPixmap(self.image)
-        self.label.setGeometry(50, 50, 200, 200)
-        self.setAcceptDrops(True)
+            self.hide()
 
 
 class MainWindow(QMainWindow):
@@ -156,7 +141,7 @@ class MainWindow(QMainWindow):
         path = "Assets\Images\\" + str(count) + ".svg"
         label = ImageLabel(self)
         label.setPixmap(QPixmap(path))
-        label.setGeometry(50, 50, 200, 200)
+        label.setGeometry(50, 50, 100, 100)
 
         self.layout1.addWidget(label)
 
@@ -174,8 +159,9 @@ class MainWindow(QMainWindow):
             imageData = mimeData.imageData()
             newLabel = ImageLabel(self)
             newLabel.setPixmap(imageData)
-            newLabel.setGeometry(event.position().x(), event.position().y(), 200, 200)
+            newLabel.setGeometry(event.position().x(), event.position().y(), 100, 100)
             newLabel.show()
+
             event.accept()
         else:
             event.ignore()
