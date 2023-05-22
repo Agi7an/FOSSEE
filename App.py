@@ -103,10 +103,10 @@ class ImageWidget(QWidget):
 
     def showImage(self):
         self.image = QPixmap(self.path)
-        self.image = self.image.scaled(QSize(150, 150))
+        self.image = self.image.scaled(QSize(100, 100))
         self.label = QLabel(self)
         self.label.setPixmap(self.image)
-        # self.label.move(100, 100)
+        # self.label.move(random.randint(0, 700), random.randint(0, 500))
 
 
 class MainWindow(QMainWindow):
@@ -118,6 +118,7 @@ class MainWindow(QMainWindow):
         self.setFixedSize(QSize(800, 700))
         self.setWindowTitle("FOSSEE")
         self.mainLayout = QVBoxLayout()
+        self.layout1 = QGridLayout()
         self.layout2 = QHBoxLayout()
         # layout2.setContentsMargins(20, 20, 20, 20)
         # layout2.setSpacing(20)
@@ -129,15 +130,18 @@ class MainWindow(QMainWindow):
 
         self.button1.clicked.connect(self.generateImage)
 
+        """
         self.canvasLabel = QLabel()
         self.canvas = QPixmap(800, 600)
         self.canvas.fill(QColor(0, 0, 0))
         self.canvasLabel.setPixmap(self.canvas)
+        """
 
         self.layout2.addWidget(self.button1)
         self.layout2.addWidget(self.button2)
-        # mainLayout.addWidget(self.canvasLabel)
 
+        # self.mainLayout.addWidget(self.canvasLabel)
+        self.mainLayout.addLayout(self.layout1)
         self.mainLayout.addLayout(self.layout2)
 
         self.widget = QWidget()
@@ -151,7 +155,10 @@ class MainWindow(QMainWindow):
         imageWidget = ImageWidget("Assets\Images\\" + str(count) + ".svg")
         imageWidget.resize(100, 100)
 
-        self.mainLayout.addWidget(imageWidget)
+        # self.mainLayout.addWidget(imageWidget)
+        self.layout1.addWidget(
+            imageWidget, random.randint(0, count), random.randint(0, count)
+        )
 
 
 app = QApplication([])
