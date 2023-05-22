@@ -11,17 +11,11 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
 )
 from PyQt6.QtGui import QPixmap, QPalette, QColor
-<<<<<<< HEAD
 
 import random
 import requests
 import os
 
-=======
-from PyQt6 import uic
-import random
-
->>>>>>> 3be39ff3769046c57ffc3ccd7f94c0ef8178f421
 """
 class Color(QWidget):
     def __init__(self, color):
@@ -33,7 +27,6 @@ class Color(QWidget):
         self.setPalette(palette)
 """
 
-<<<<<<< HEAD
 names = [
     "1F4A0.svg",
     "1F518.svg",
@@ -100,9 +93,6 @@ def downloadImage():
 
 
 downloadImage()
-=======
-paths = ["Assets\Images\Fox.jpeg", "Assets\Images\AylanLogo2.png"]
->>>>>>> 3be39ff3769046c57ffc3ccd7f94c0ef8178f421
 
 
 class ImageWidget(QWidget):
@@ -156,50 +146,12 @@ class MainWindow(QMainWindow):
 
     def generateImage(self):
         print("Downloading and displaying image...")
-<<<<<<< HEAD
         downloadImage()
 
         imageWidget = ImageWidget("Assets\Images\\" + str(count) + ".svg")
-=======
-
-        r = random.randint(0, len(paths) - 1)
-
-        imageWidget = ImageWidget(paths[r])
->>>>>>> 3be39ff3769046c57ffc3ccd7f94c0ef8178f421
         imageWidget.resize(100, 100)
 
         self.mainLayout.addWidget(imageWidget)
-
-<<<<<<< HEAD
-=======
-    def mouseMoveEvent(self, e):
-        self.label.setText("Mouse Moved!")
-
-    def mousePressEvent(self, e):
-        if e.button() == Qt.MouseButton.LeftButton:
-            # self.label.setText("Left Mouse Button Pressed")
-            self.label.setPixmap(QPixmap("Assets\Images\Fox.jpeg"))
-        elif e.button() == Qt.MouseButton.RightButton:
-            self.label.setText("Right Mouse Button Pressed")
-        elif e.button() == Qt.MouseButton.MiddleButton:
-            self.label.setText("Middle Mouse Button Pressed")
-
-    def mouseReleaseEvent(self, e):
-        if e.button() == Qt.MouseButton.LeftButton:
-            self.label.setText("Left Mouse Button Released")
-        elif e.button() == Qt.MouseButton.RightButton:
-            self.label.setText("Right Mouse Button Released")
-        elif e.button() == Qt.MouseButton.MiddleButton:
-            self.label.setText("Middle Mouse Button Released")
-
-    def mouseDoubleClickEvent(self, e):
-        if e.button() == Qt.MouseButton.LeftButton:
-            self.label.setText("Left Mouse Button Double Clicked")
-        elif e.button() == Qt.MouseButton.RightButton:
-            self.label.setText("Right Mouse Button Double Clicked")
-        elif e.button() == Qt.MouseButton.MiddleButton:
-            self.label.setText("Middle Mouse Button Double Clicked")
->>>>>>> 3be39ff3769046c57ffc3ccd7f94c0ef8178f421
 
 
 app = QApplication([])
